@@ -97,3 +97,12 @@ Save and exit.
 
 # Running the DICOM Daemon
 
+First, configure settings in `global-headers/configuration.inc.php`.  There you will find the AE title, and port. The
+defaults are port 1070 (anything lower than 1024 requires special permissions to run), and AE title TERRA_DMWL.
+
+Then, to run the DICOM modality worklist daemon.
+
+    $ php scripts/dmwl_deamon.php
+
+You might try to use NSSM (google it) to turn this into a Windows service.  If running on posix, then an upstart
+job will do.
