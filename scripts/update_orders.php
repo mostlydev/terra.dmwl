@@ -20,9 +20,10 @@ foreach ($exams as $exam) {
 
   if (!$record->isStale())
   {
-    if ($record->needsUpdate())
+    if ($record->fileNeedsUpdate())
     {
-      $record->update();
+      print "Updating record for {$record->uid}\n";
+      $record->updateDumpFile();
     }
   }
 }

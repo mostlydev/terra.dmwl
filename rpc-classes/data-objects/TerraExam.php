@@ -34,7 +34,7 @@ class TerraExam extends GenericDICOMDataObject
     $this->gender= $row['ex_p_gender'];
     $this->modality= $row['ex_modality'];
     $this->requested_procedure_id= $row['ex_order_no'];
-    $this->requested_start_datestart_date= new DateTime( $row['start_date'] );
+    $this->requested_start_date= new DateTime( $row['start_date'] );
     $this->allergy = $row['ex_allergy'];
     $this->birthdate = DateTime::createFromFormat('m-d-Y', $row['p_bday']);
 
@@ -59,12 +59,12 @@ class TerraExam extends GenericDICOMDataObject
     $this->setTag("0010,0010",
         $this->cleanName($this->last_name) . '^' .
         $this->cleanName($this->first_name) .
-        ( $this->p_mname ? '^' . $this->cleanName($this->middle_name) : '' ) );
+        ( $this->middle_name ? '^' . $this->cleanName($this->middle_name) : '' ) );
 
     $this->setTag("0040,0002", $this->requested_start_date->format('Ymd'));
     $this->setTag("0040,0003", $this->requested_start_date->format('His'));
 
-    $this->uid = "1.2.826.0.1.3680043.2.1635.499192.{$this->no}";
+    $this->uid = "1.2.826.0.1.3680043.2.1635.499192.{$this->id}";
     $this->setTag(self::UID_TAG, $this->uid );
     $this->setTag("0010,0020", $this->patient_id);
     $this->setTag("0010,0040", $this->gender);

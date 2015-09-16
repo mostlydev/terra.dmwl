@@ -1,7 +1,11 @@
 <?php
 
-ifndefdefine( 'APP_SHORT', 'terra' );
-ifndefdefine( 'APP_ROOT', 'c:/www/' ); // Change this
+/*
+ * ALL PATHS MUST HAVE TRAILING SLASHES
+ */
+
+ifndefdefine( 'APP_SHORT', 'terra' ); //TODO: Check and/or change if using a different app and set of classes
+ifndefdefine( 'APP_ROOT', 'c:/www/' . APP_SHORT . '/' ); //TODO: Check and/or change
 
 // Paths
 ifndefdefine( 'THIRD_PARTY_PATH', APP_ROOT . '3rd-party/');
@@ -11,10 +15,10 @@ ifndefdefine( 'CACHE_PATH', APP_ROOT . 'cache/' );
 ifndefdefine( 'LOGS_PATH', APP_ROOT . 'logs/' );
 
 // Database ifndefdefines
-ifndefdefine('DATABASE_SERVER', '127.0.0.1');
-ifndefdefine('DATABASE_NAME', APP_SHORT . 'db');
-ifndefdefine('DATABASE_USERNAME', 'terrauser');   // Change this
-ifndefdefine('DATABASE_PASSWORD', 'terrapwd');  // Change this
+ifndefdefine('DATABASE_SERVER', '127.0.0.1'); //TODO: Check/change
+ifndefdefine('DATABASE_NAME', APP_SHORT . 'db'); //TODO: Check/change
+ifndefdefine('DATABASE_USERNAME', APP_SHORT. 'user');  //TODO: Check/change
+ifndefdefine('DATABASE_PASSWORD', APP_SHORT . 'pwd');  //TODO: Check/change
 ifndefdefine('TABLE_PREFIX','');
 
 // Logging
@@ -31,12 +35,12 @@ ifndefdefine( 'FLUX_INC_DEBUG_MODE', false );
 date_default_timezone_set( 'America/New_York' );
 
 ifndefdefine('DMWL_DCM_PATH', CACHE_PATH . 'worklist/');
-ifndefdefine('DMWL_MAX_AGE', 365);  // Worklist record expiration in days
-ifndefdefine('DMWL_AE_TITLE', 'TERRA_DMWL');  // Change if desired
-ifndefdefine('DMWL_PORT', 1070);  // Change if desired, you need to elevate to root to listen on ports lower than 1024
-ifndefdefine('DMWL_SOURCE_CLASS', 'TerraExam');
+ifndefdefine('DMWL_MAX_AGE', 7);  // TODO: Worklist record expiration in days
+ifndefdefine('DMWL_AE_TITLE', strtoupper(APP_SHORT) . '_DMWL');  //TODO: Check/change
+ifndefdefine('DMWL_PORT', 1070);  // TODO: You need to elevate to root to listen on ports lower than 1024
+ifndefdefine('DMWL_SOURCE_CLASS', ucfirst(APP_SHORT) . 'Exam'); // TODO: Make sure it matches the data class name!
 
-// This shouldn't change.  Please refer to docs/README.md for instructions about installing DCMTk
+// This shouldn't change.  Please refer to README.md for instructions about installing DCMTk
 ifndefdefine('DCMTK_BIN_PATH', THIRD_PARTY_PATH . 'dcmtk/bin/');
 
 // XXX Should be removed eventually

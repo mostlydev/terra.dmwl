@@ -29,13 +29,13 @@ class WorklistRecord extends GenericDICOMDataObject
       $this->dump = $this->source->dump;
   }
 
-  public function needsUpdate() {
+  public function fileNeedsUpdate() {
     if (!file_exists($this->path)) return true;
     if ($this->dump !== file_get_contents($this->path)) return true;
     return false;
   }
 
-  public function update() {
+  public function updateDumpFile() {
     file_put_contents($this->path, $this->dump);
     $cmd = escapeshellcmd(DCMTK_BIN_PATH . 'dump2dcm' );
     $arg1 = escapeshellarg( $this->path );
