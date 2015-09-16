@@ -1,15 +1,16 @@
-# Terra DICOM Worklist Server
+# PHP DICOM Worklist Server
 
-This is a standalone worklist SCP provider for the `terradb` application.  The implementation is deliberately split into 
-DMWL management classes and database interface classes.  See notes at the end about how to make this a worklist daemon
-for other database schemas.
+This is a standalone worklist SCP provider for a particular application called `terra`.  However, the implementation
+has been deliberately split into DMWL management classes and database interface classes so that it can be reused for
+pretty much any project.
+
+> See notes at the end about how to make this a worklist daemon for other schemas.
 
 This is all very rudimentary.  Briefly, this application:
 
-- Generates DCMTk "dump" files based on a data mapping class
+- Generates DCMTk "dump" files based on a data mapping class some MySQL data source
 - Converts those dump files into DCM .wl records using dump2dcm
-- Provides a way to run wlmscpfs and pipe output to a log file
-
+- Provides a way to run `wlmscpfs` to use those files and pipe output to a log file
 
 # Dependencies
 
