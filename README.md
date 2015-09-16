@@ -1,7 +1,18 @@
+# Terra DICOM Worklist Server
+
 This is a standalone worklist provider for the `terradb` application.  It makes use of the
 following:
 
   - DCMTk binaries, either from Homebrew on Mac, or from the OFFIS website
+
+It is a very rudimentary implementaiton.  Briefly, it:
+
+- Prunes old worklist records from a wlmscpfs data directory
+- Queries the terra database
+- Generates dcmtk DCM dump files using the available data in the exam table
+- Converts those dump files into DCM using dump2dcm
+- Provides a way to run wlmscpfs and pipe output to a log file
+
 
 
 ## Installing DCMTk binaries
