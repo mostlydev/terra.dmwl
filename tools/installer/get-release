@@ -1,0 +1,161 @@
+#!/bin/bash
+
+#
+# Initial variables and loading of configuration files
+#
+WORKING_PATH=`dirname $0`
+WORKING_PATH=$(cd $WORKING_PATH && pwd)
+CONFIG_PATH="$WORKING_PATH/configuration"
+INSTALLER_PATH="$WORKING_PATH/`basename $0`"
+
+
+if ! [ -e $CONFIG_PATH ]; then
+  echo "Missing configuration file $CONFIG_PATH" >&2
+  exit 1
+fi
+
+source $CONFIG_PATH
+
+if [ -z $SVN_USER ] || [ -z $SVN_PASSWORD ]; then
+  SVN_COMMAND="svn --no-auth-cache"
+else
+  SVN_COMMAND="svn --no-auth-cache --username=$SVN_USER"
+  SVN_COMMAND="$SVN_COMMAND --password=$SVN_PASSWORD"
+fi
+
+#
+# Initial asserts
+#
+USAGE_MSG="Usage:\n
+\t`basename $0` -l\n
+\t\tLists available releases.\n
+\t`basename $0` release-name\n
+\t\tInstalls selected release.\n
+\t`basename $0` -h\n
+\t\tDisplays this message."
+
+if [ -z $1 ]; then
+  echo -e $USAGE_MSG >&2
+  exit 1
+fi
+
+if [ "-h" = $1 ]; then
+  echo -e $USAGE_MSG
+  exit 0
+fi
+
+if [ "-l" = $1 ]; then
+  $SVN_COMMAND ls "$SVN_REPOSITORY/tags/" | grep "^release" \
+    | sed -r -e "s:release-(.*)/:\1:"
+  exit 0
+fi
+
+#
+# Stage 1 - download new release and update installer
+#
+if ! [ $RERUNED ]; then
+  SVN_RELEASE_PATH="$SVN_REPOSITORY/tags/release-$1"
+
+  if [ -e "$WORKING_PATH/tmp" ]; then
+    echo "Previous installation has not completed successfully." >&2
+    echo "If you're aware of that remove installer's tmp directory manually." \
+      >&2
+    exit 1
+  fi
+
+  echo "Downloading new release. This may take a while."
+  if ! $SVN_COMMAND export "$SVN_RELEASE_PATH" "$WORKING_PATH/tmp" > /dev/null;
+  then
+    echo "Error during release download."
+    exit 1
+  fi
+
+  if [ $SKIP_INSTALLER_UPDATE ]; then
+    echo "Skipping updating installer."
+  elif ! [ -e "$WORKING_PATH/tmp/tools/installer/get-release" ]; then
+    echo "No installer in release. Continuing using current."
+  else
+    if ! diff -q "$WORKING_PATH/tmp/tools/installer/get-release" \
+      "$INSTALLER_PATH" > /dev/null
+    then
+      echo "Updating installer"
+      cp "$WORKING_PATH/tmp/tools/installer/get-release" "$INSTALLER_PATH"
+      cp "$WORKING_PATH/tmp/tools/installer/README" "$WORKING_PATH/"
+    else
+      echo "Installer is up to date."
+    fi
+    echo $1 > "$WORKING_PATH/VERSION"
+  fi
+
+  env RERUNED=true $INSTALLER_PATH $1
+#
+# Stage 2 - perform installation
+#
+else
+  echo "Copying initialization files to downloaded package."
+  cp -R initialization/* "$WORKING_PATH/tmp/" 2> /dev/null
+
+  echo "Setting publicly-writeable permissions on logs and cache dirs."
+  chmod -R a+rwX "$WORKING_PATH/tmp/logs"
+  chmod -R a+rwX "$WORKING_PATH/tmp/cache"
+  chmod -R a+rwX "$WORKING_PATH/tmp/uploads"
+
+  if [ -x $WORKING_PATH/tmp/tools/installer/preinstall ]; then
+    echo "Running pre-installation script."
+    $WORKING_PATH/tmp/tools/installer/preinstall
+
+    if [ $? -gt 0 ]; then
+      echo "Pre installation script has exited with error."
+      exit 1
+    fi
+  fi
+
+  echo "Creating target public directory structure"
+  if ! mkdir -p "$TARGET_PUBLIC"; then
+    echo "Failed. Are we missing permissions?" >&2
+    exit 1
+  fi
+  echo "Creating target private directory structure"
+  if ! mkdir -p "$TARGET_PRIVATE"; then
+    echo "Failed. Are we missing permissions?" >&2
+    exit 1
+  fi
+
+  echo "Removing files from $TARGET_PUBLIC."
+  if ! rm -fR "$TARGET_PUBLIC"/*; then
+    echo "Failed. Are we missing permissions?" >&2
+    exit 1
+  fi
+  echo "Removing files from $TARGET_PRIVATE."
+  if ! rm -fR "$TARGET_PRIVATE"/*; then
+    echo "Failed. Are we missing permissions?" >&2
+    exit 1
+  fi
+
+  echo "Installing public files."
+  if ! mv "$WORKING_PATH/tmp/public"/* "$TARGET_PUBLIC/"; then
+    exit 1
+  fi
+  rm -fR "$WORKING_PATH/tmp/public"
+  echo "Installing private files."
+  if ! mv "$WORKING_PATH/tmp"/* "$TARGET_PRIVATE/"; then
+    exit 1
+  fi
+  rm -fR "$WORKING_PATH/tmp"
+
+  if [ -x $TARGET_PRIVATE/tools/installer/postinstall ]; then
+    echo "Running post-installation script."
+    $TARGET_PRIVATE/tools/installer/postinstall
+
+    if [ $? -gt 0 ]; then
+      echo "Post installation script has exited with error."
+      exit 1
+    fi
+  fi
+
+
+  echo "Installation completed successfully."
+
+  exit 0
+fi
+

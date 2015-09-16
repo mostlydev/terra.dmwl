@@ -1,0 +1,12 @@
+#!/bin/bash
+
+let RETURN=0
+
+for f in $*
+do
+  php -l $f | grep -v "No syntax errors"
+  let RETURN=$RETURN+$PIPESTATUS
+done;
+
+exit $RETURN
+

@@ -1,0 +1,6 @@
+.dropbox
+/nbproject/private/
+/public/.htaccess
+/sessions/sess*
+/*/*/require-globals.php
+

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if ! [ -e release.conf ]; then
+  echo "Missing configuration file." >&2
+  exit 1
+fi
+
+if [ -z $2 ]; then
+  echo "Usage: `basename $0` revision release-name" >&2
+  echo "Not enough parameters." >&2
+  exit 1
+fi
+
+
+if echo $1 | grep -v "^[0-9]*$" > /dev/null; then
+  echo "Usage: `basename $0` revision release-name" >&2
+  echo "Revision must be a number." >&2
+  exit 1
+fi
+
+source release.conf
+
+svn rm -m "Preparing for release update." $SVN_URL/tags/release-$2 \
+  1> /dev/null 2> /dev/null
+
+svn copy -r $1 $SVN_URL/trunk $SVN_URL/tags/release-$2
+

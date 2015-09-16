@@ -1,0 +1,43 @@
+#
+# About
+#
+This installer automatically downloads specified YPG Scheduler release and
+installs it to configured folders. During the process it updates itself to
+version distributed with specified release package, so you don't have to worry
+about keeping it up to date yourself.
+
+Basic usage example:
+get-release 0.9.0-presentation
+To get list of releases:
+get-release -l
+
+#
+# Configuration
+#
+Copy file "configuration.template" to "configuration" and edit it to your
+liking. Remember to chmod it to 0600 before storing svn password in there (you
+don't have to store any credentials there, if you don't mind being asked for
+them with every installer run).
+
+#
+# Initialization files
+#
+Directories given in TARGET_PUBLIC and TARGET_PRIVATE will be deleted during
+installation process, so all custom changes since previous installation will be
+lost. You can use "initialization" directory to include new files or modify
+those existing in release package in a way that will be preserved between
+installations. All files in this directory will be copied to installation
+directories during install. Place directly in "initialization" files you want
+to be included in TARGET_PRIVATE and in "initialization/public" those that
+should be copied into TARGET_PUBLIC.
+
+You probably want to include there configuration files:
+global-headers/configuration.inc.php
+rpc-headers/configuration.inc.php
+ui-headers/configuration.inc.php
+public/includes/require-globals.php
+public/amfphp/require-globals.php
+
+But any other file will do. I.e. if you want custom favicon place it under:
+public/favicon.ico
+
