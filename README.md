@@ -1,10 +1,9 @@
 # PHP DICOM Worklist Server
 
-This is a standalone worklist SCP provider for a particular application called `terra`.  However, the implementation
-has been deliberately split into DMWL management classes and database interface classes so that it can be reused for
-pretty much any project.
+This is a standalone worklist SCP provider for a particular RIS called `terra`.  The implementation
+has been deliberately split into DMWL management classes and database interface classes so that it can be reused.
 
-> See notes at the end about how to make this a worklist daemon for other schemas.
+> See notes at the end about how to turn this into a worklist daemon for other schemas.
 
 This is all very rudimentary.  Briefly, this application:
 
