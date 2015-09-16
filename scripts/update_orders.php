@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * NOT COMPLETE
+ * This script deletes stale DMWL records and creates new ones using the contents of the exam table.
+ */
+
 ini_set( 'display_errors', true );
 error_reporting( E_ALL );
 require_once( 'includes/header.inc.php' );

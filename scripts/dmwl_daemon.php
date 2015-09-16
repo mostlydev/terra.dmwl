@@ -1,11 +1,15 @@
 <?php
 
+/*
+ * This script executes the DCMTk Worklist daemon.  It re-starts 5 seconds after any abnormal termination.
+ */
+
 ini_set( 'display_errors', true );
 error_reporting( E_ALL );
 require_once( 'includes/header.inc.php' );
 
 while (1) {
-  echo "DICOM worklist is started ...";
+  echo "DICOM worklist is started (CTRL-C to quit)";
   $wl_cmd = escapeshellcmd( DCMTK_BIN_PATH . 'wlmscpfs' );
   $wl_args = array();
   array_push( $wl_args, '--disable-host-lookup');
