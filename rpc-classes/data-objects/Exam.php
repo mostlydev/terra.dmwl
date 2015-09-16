@@ -1,6 +1,6 @@
 <?php
 
-class Exam
+class Exam extends GenericDataObject
 {
   public $no;
   public $acc_no;

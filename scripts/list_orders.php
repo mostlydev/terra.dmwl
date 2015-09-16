@@ -3,7 +3,22 @@
 ini_set( 'display_errors', true );
 error_reporting( E_ALL );
 require_once( 'includes/header.inc.php' );
+/*
+$mgr = new ExamsMgmt();
 
+$startDate = new DateTime();
+$startDate->sub( new DateInterval( 'P' . DMWL_MAX_AGE . 'D') );
+$endDate = new DateTime();
+
+$exams = $mgr->getBetweenDates($startDate, $endDate );
+var_dump( $exams );
+*/
+
+$rec = new WorklistRecord();
+$rec->setTag( "0010,0010", "SMITH^VERNON" );
+var_dump( $rec->dump );
+
+exit;
 
 $location = ORDER_INBOX . '*_*';
 try {

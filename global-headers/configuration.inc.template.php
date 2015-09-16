@@ -11,10 +11,10 @@ ifndefdefine( 'CACHE_PATH', APP_ROOT . 'cache/' );
 ifndefdefine( 'LOGS_PATH', APP_ROOT . 'logs/' );
 
 // Database ifndefdefines
-ifndefdefine('DATABASE_SERVER', 'localhost');
+ifndefdefine('DATABASE_SERVER', '127.0.0.1');
 ifndefdefine('DATABASE_NAME', APP_SHORT . 'db');
-ifndefdefine('DATABASE_USERNAME', 'db_user');   // Change this
-ifndefdefine('DATABASE_PASSWORD', 'influx_password');  // Change this
+ifndefdefine('DATABASE_USERNAME', 'terrauser');   // Change this
+ifndefdefine('DATABASE_PASSWORD', 'terrapwd');  // Change this
 ifndefdefine('TABLE_PREFIX','');
 
 // Logging
@@ -30,7 +30,10 @@ ifndefdefine( 'FLUX_INC_DEBUG_MODE', false );
 // Php config
 date_default_timezone_set( 'America/New_York' );
 
-ifndefdefine('DMWL_ROOT', 'c:/Share/incoming/');
+ifndefdefine('DMWL_DCM_PATH', CACHE_PATH . 'worklist/');
+ifndefdefine('DMWL_MAX_AGE', 365);  // Worklist record expiration in days
+ifndefdefine('DMWL_AE_TITLE', 'TERRA_DMWL');  // Change if desired
+ifndefdefine('DMWL_PORT', 1070);  // Change if desired
 
 // This shouldn't change.  Please refer to docs/README.md for instructions about installing DCMTk
 ifndefdefine('DCMTK_BIN_PATH', THIRD_PARTY_PATH . 'dcmtk/bin/');

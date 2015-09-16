@@ -7,7 +7,4 @@ class DICOMHelper extends GenericHelper
   public function __construct( ) {
     parent::__construct();
   }
-
-
-
 }
