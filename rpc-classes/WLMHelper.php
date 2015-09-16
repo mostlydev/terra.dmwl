@@ -30,6 +30,12 @@ class WLMHelper extends GenericHelper
           print "Deleting stale record {$dcmName}\n";
           unlink( $dcmPath );
         }
+        if (file_exists($record->path))
+        {
+          $dumpName = basename($record->path);
+          print "Deleting stale dump {$dumpName}\n";
+          unlink( $record->path );
+        }
       }
     }
   }

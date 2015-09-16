@@ -4,7 +4,7 @@ class WorklistRecord extends GenericDataObject
 {
   public $dump;
   public $path;
-  public $needsUpdate;
+  public $studyInstanceUid;
 
   public function __construct( $source = null )
   {
@@ -22,6 +22,20 @@ class WorklistRecord extends GenericDataObject
     }
   }
 
+  public function needsUpdate() {
+    if (!file_exists($this->path)) return true;
+    if ($this->dump !== file_get_contents($this->path)) return true;
+    return false;
+  }
+
+  public function update() {
+    file_put_contents($this->path, $this->dump);
+    $cmd = escapeshellcmd(DCMTK_BIN_PATH . 'dump2dcm' );
+    $arg1 = escapeshellarg( $this->path );
+    $arg2 = escapeshellarg( $this->path . '.dcm' );
+    exec( "$cmd --write-xfer-little $arg1 $arg2" );
+  }
+
   public function isStale() {
     $cutoff = new DateTime();
     $cutoff = $cutoff->sub( new DateInterval('P'. DMWL_MAX_AGE .'D') );
@@ -29,7 +43,7 @@ class WorklistRecord extends GenericDataObject
   }
 
   public function setTag( $tag, $value ) {
-    $this->dump = preg_replace( "/(\($tag\))(.+):.+/", "$1$2$3$value", $this->dump );
+    $this->dump = preg_replace( "/\%\[$tag\]/", $value, $this->dump );
   }
 
   public function isComplete() {
@@ -40,6 +54,7 @@ class WorklistRecord extends GenericDataObject
     $this->path = $path;
     if ($path) {
       $this->dump = file_get_contents($path);
+      $this->studyInstanceUid = $this->getTag("0020,000d" );
     } else {
       $this->dump = self::DUMP_TEMPLATE;
     }
@@ -69,39 +84,62 @@ class WorklistRecord extends GenericDataObject
 
   public function getTag( $tag )
   {
-    $value = preg_match( "/(\($tag\))\s[A-Z]{2}([\s]+)(.+)$/m", $this->dump, $matches );
+    $value = preg_match( "/^(\($tag\))\s[A-Z]{2}([\s]+)(.+)$/m", $this->dump, $matches );
     return $value ? $matches[3] : null;
   }
 
-  private function fromExam($exam) {
-    print "TODO\r";
+  private function fromExam($exam)
+  {
+    $this->dump = self::DUMP_TEMPLATE;
+    $this->setTag("0008,0050", $exam->acc_no);
+
+    $this->setTag("0010,0010",
+        $this->cleanName($exam->p_lname) . '^' .
+        $this->cleanName($exam->p_fname) .
+        ( $exam->p_mname ? '^' . $this->cleanName($exam->p_mname) : '' ) );
+
+    $this->setTag("0040,0002", $exam->start_date->format('Ymd'));
+    $this->setTag("0040,0003", $exam->start_date->format('His'));
+
+    $this->studyInstanceUid = "1.2.826.0.1.3680043.2.1635.499192.{$exam->no}";
+    $this->setTag("0020,000d", $this->studyInstanceUid );
+    $this->setTag("0010,0020", $exam->p_id);
+    $this->setTag("0010,0040", $exam->p_gender);
+    $this->setTag("0008,0060", $exam->modality);
+    $this->setTag("0032,1032", $exam->reqphy );
+    $this->setTag("0032,1060", $exam->procname );
+    $this->setTag("0010,2110", $exam->allergy );
+    $this->setTag("0010,0030", $exam->p_bday->format('Ymd'));
+
+    $this->path = DMWL_DCM_PATH . '/' . DMWL_AE_TITLE . '/' . $this->studyInstanceUid . '.dump';
+  }
+
+  private function cleanName($name)
+  {
+    $name = strtoupper($name);
+    $name = preg_replace('/[\s]+/', '^', $name );
+    return preg_replace( '/\./', '', $name);
   }
 
   const DUMP_TEMPLATE = <<<EOD
-(0008,0050) SH  :accession
+(0008,0050) SH  %[0008,0050]
 (0008,0005) CS  [ISO_IR 100]
-(0010,0010) PN  :patient_name
-(0010,0020) LO  :patient_id
-(0010,0030) DA  :patient_birthdate
-(0010,0040) CS  :patient_gender
-(0010,2000) LO  :medical_alerts
-(0010,2110) LO  :contrast_allergies
-(0020,000d) UI  :study_instance_uid
-(0032,1032) PN  :requesting_physician
-(0032,1060) LO  :requested_procedure_description
+(0010,0010) PN  %[0010,0010]
+(0010,0020) LO  %[0010,0020]
+(0010,0030) DA  %[0010,0030]
+(0010,0040) CS  %[0010,0040]
+(0010,2110) LO  %[0010,2110]
+(0020,000d) UI  %[0020,000d]
+(0032,1032) PN  %[0032,1032]
+(0032,1060) LO  %[0032,1060]
 (0040,0100) SQ
 (fffe,e000) -
-(0008,0060) CS  :modality
-(0040,0002) DA  :step_start_date
-(0040,0003) TM  :step_start_time
-(0040,0007) LO  :step_description
-(0040,0010) SH  :step_station_name
-(0040,0011) SH  :step_location
+(0008,0060) CS  %[0008,0060]
+(0040,0002) DA  %[0040,0002]
+(0040,0003) TM  %[0040,0003]
 (0040,0400) LT
 (fffe,e00d) -
 (fffe,e0dd) -
-(0040,1001) SH  :procedure_id
-(0040,1003) SH  :priority
 EOD;
 
 }

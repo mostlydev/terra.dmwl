@@ -4,7 +4,10 @@ class ExamsMgmt extends GenericMgmt
 {
 
   const QUERY_GET_EXAMS = '
-    SELECT * from exam WHERE start_date BETWEEN :start_date AND :end_date
+    SELECT exam.*, patient.P_bday as p_bday
+    FROM exam
+     INNER JOIN patient ON exam.ex_p_id = patient.P_id
+     WHERE start_date BETWEEN :start_date AND :end_date
   ';
   public function __construct() {
     parent::__construct( );
