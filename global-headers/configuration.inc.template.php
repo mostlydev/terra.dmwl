@@ -33,7 +33,8 @@ date_default_timezone_set( 'America/New_York' );
 ifndefdefine('DMWL_DCM_PATH', CACHE_PATH . 'worklist/');
 ifndefdefine('DMWL_MAX_AGE', 365);  // Worklist record expiration in days
 ifndefdefine('DMWL_AE_TITLE', 'TERRA_DMWL');  // Change if desired
-ifndefdefine('DMWL_PORT', 1070);  // Change if desired
+ifndefdefine('DMWL_PORT', 1070);  // Change if desired, you need to elevate to root to listen on ports lower than 1024
+ifndefdefine('DMWL_SOURCE_CLASS', 'TerraExam');
 
 // This shouldn't change.  Please refer to docs/README.md for instructions about installing DCMTk
 ifndefdefine('DCMTK_BIN_PATH', THIRD_PARTY_PATH . 'dcmtk/bin/');

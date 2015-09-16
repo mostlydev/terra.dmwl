@@ -8,6 +8,7 @@ class WLMHelper extends GenericHelper
   public function __construct( ) {
     parent::__construct();
     $this->dataPath = DMWL_DCM_PATH . '/' . DMWL_AE_TITLE . '/';
+    touch( $this->dataPath . '/lockfile' );
     $this->update();
   }
 

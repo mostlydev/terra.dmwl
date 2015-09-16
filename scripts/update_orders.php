@@ -1,8 +1,7 @@
 <?php
 
 /*
- * NOT COMPLETE
- * This script deletes stale DMWL records and creates new ones using the contents of the exam table.
+ * Updates worklist records using data source class defined in DMWL_SOURCE_CLASS configuration parameter
  */
 
 ini_set( 'display_errors', true );
@@ -12,15 +11,13 @@ require_once( 'includes/header.inc.php' );
 $wl = new WLMHelper();
 $wl->prune();
 
-$mgr = new ExamsMgmt();
-$startDate = new DateTime();
-$startDate->sub( new DateInterval( 'P' . DMWL_MAX_AGE . 'D') );
-$endDate = new DateTime();
-
-$exams = $mgr->rowsToDataObjects( 'Exam', $mgr->getBetweenDates($startDate, $endDate ) );
+// Change this if you decide to use a different data source
+$exams = call_user_func( DMWL_SOURCE_CLASS . '::recent');
 
 foreach ($exams as $exam) {
+
   $record = new WorklistRecord( $exam );
+
   if (!$record->isStale())
   {
     if ($record->needsUpdate())

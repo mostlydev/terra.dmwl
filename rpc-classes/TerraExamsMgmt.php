@@ -1,6 +1,9 @@
 <?php
 
-class ExamsMgmt extends GenericMgmt
+/*
+ * Utility class for the terradb.  Used within TerraExam to retrieve records.
+ */
+class TerraExamsMgmt extends GenericMgmt
 {
 
   const QUERY_GET_EXAMS = '
