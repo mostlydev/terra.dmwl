@@ -21,7 +21,7 @@ class WLMHelper extends GenericHelper
 
   public function prune() {
     foreach($this->records as $record) {
-      $dcmPath = $record->path . '.dcm';
+      $dcmPath = $record->path . '.wl';
       if ($record->isStale())
       {
         if (file_exists($dcmPath))

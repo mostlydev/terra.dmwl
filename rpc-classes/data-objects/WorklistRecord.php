@@ -32,7 +32,7 @@ class WorklistRecord extends GenericDataObject
     file_put_contents($this->path, $this->dump);
     $cmd = escapeshellcmd(DCMTK_BIN_PATH . 'dump2dcm' );
     $arg1 = escapeshellarg( $this->path );
-    $arg2 = escapeshellarg( $this->path . '.dcm' );
+    $arg2 = escapeshellarg( $this->path . '.wl' );
     exec( "$cmd --write-xfer-little $arg1 $arg2" );
   }
 
