@@ -4,64 +4,41 @@ class TerraExam extends GenericDICOMDataObject
 {
   const UID_TAG = "0020,000d";
 
-  public $no;
-  public $acc_no;
-  public $p_fname;
-  public $p_lname;
-  public $p_mname;
-  public $p_id;
-  public $procname;
-  public $reqphy;
-  public $p_gender;
-  public $modality;
-  public $order_no;
-  public $start_date;
-  public $end_date;
+  public $id;
+
+  public $first_name;
+  public $last_name;
+  public $middle_name;
+  public $patient_id;
+  public $gender;
   public $allergy;
-  public $p_bday;
+  public $birthdate;
+
+  public $accession;
+  public $modality;
+
+  public $requesting_physician;
+  public $requested_procedure_name;
+  public $requested_procedure_id;
+  public $requested_start_date;
 
   public function __construct( $row ) {
-    $this->no= $row['exam_no'];
-    $this->acc_no= $row['ex_acc_no'];
-    $this->p_fname= $row['ex_p_fname'];
-    $this->p_lname= $row['ex_p_lname'];
-    $this->p_mname= $row['ex_p_mname'] !== 'NULL' ? $row['ex_p_mname'] : null ;
-    $this->p_id= $row['ex_p_id'];
-    $this->procname= $row['ex_procname'];
-    $this->reqphy= $row['ex_reqphy'];
-    $this->p_gender= $row['ex_p_gender'];
-    $this->p_modality= $row['ex_modality'];
-    $this->order_no= $row['ex_order_no'];
-    $this->start_date= new DateTime( $row['start_date'] );
-    $this->end_date= new DateTime( $row['end_date'] );
+    $this->id= $row['exam_no'];
+    $this->accession= $row['ex_acc_no'];
+    $this->first_name= $row['ex_p_fname'];
+    $this->last_name= $row['ex_p_lname'];
+    $this->middle_name= $row['ex_p_mname'] !== 'NULL' ? $row['ex_p_mname'] : null ;
+    $this->patient_id= $row['ex_p_id'];
+    $this->requested_procedure_name= $row['ex_procname'];
+    $this->requesting_physician= $row['ex_reqphy'];
+    $this->gender= $row['ex_p_gender'];
+    $this->modality= $row['ex_modality'];
+    $this->requested_procedure_id= $row['ex_order_no'];
+    $this->requested_start_datestart_date= new DateTime( $row['start_date'] );
     $this->allergy = $row['ex_allergy'];
-    $this->p_bday = DateTime::createFromFormat('m-d-Y', $row['p_bday']);
+    $this->birthdate = DateTime::createFromFormat('m-d-Y', $row['p_bday']);
 
     parent::__construct();
-  }
-
-  public function updateDump()
-  {
-    $this->dump = self::DUMP_TEMPLATE;
-    $this->setTag("0008,0050", $this->acc_no);
-
-    $this->setTag("0010,0010",
-        $this->cleanName($this->p_lname) . '^' .
-        $this->cleanName($this->p_fname) .
-        ( $this->p_mname ? '^' . $this->cleanName($this->p_mname) : '' ) );
-
-    $this->setTag("0040,0002", $this->start_date->format('Ymd'));
-    $this->setTag("0040,0003", $this->start_date->format('His'));
-
-    $this->uid = "1.2.826.0.1.3680043.2.1635.499192.{$this->no}";
-    $this->setTag(self::UID_TAG, $this->uid );
-    $this->setTag("0010,0020", $this->p_id);
-    $this->setTag("0010,0040", $this->p_gender);
-    $this->setTag("0008,0060", $this->modality);
-    $this->setTag("0032,1032", $this->reqphy );
-    $this->setTag("0032,1060", $this->procname );
-    $this->setTag("0010,2110", $this->allergy );
-    $this->setTag("0010,0030", $this->p_bday->format('Ymd'));
   }
 
   static function recent()
@@ -72,6 +49,30 @@ class TerraExam extends GenericDICOMDataObject
     $endDate = new DateTime();
 
     return $mgr->rowsToDataObjects( 'TerraExam', $mgr->getBetweenDates($startDate, $endDate ) );
+  }
+
+  public function updateDump()
+  {
+    $this->dump = self::DUMP_TEMPLATE;
+    $this->setTag("0008,0050", $this->accession);
+
+    $this->setTag("0010,0010",
+        $this->cleanName($this->last_name) . '^' .
+        $this->cleanName($this->first_name) .
+        ( $this->p_mname ? '^' . $this->cleanName($this->middle_name) : '' ) );
+
+    $this->setTag("0040,0002", $this->requested_start_date->format('Ymd'));
+    $this->setTag("0040,0003", $this->requested_start_date->format('His'));
+
+    $this->uid = "1.2.826.0.1.3680043.2.1635.499192.{$this->no}";
+    $this->setTag(self::UID_TAG, $this->uid );
+    $this->setTag("0010,0020", $this->patient_id);
+    $this->setTag("0010,0040", $this->gender);
+    $this->setTag("0008,0060", $this->modality);
+    $this->setTag("0032,1032", $this->requesting_physician );
+    $this->setTag("0032,1060", $this->requested_procedure_name );
+    $this->setTag("0010,2110", $this->allergy );
+    $this->setTag("0010,0030", $this->birthdate->format('Ymd'));
   }
 
   const DUMP_TEMPLATE = <<<EOD

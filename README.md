@@ -1,13 +1,13 @@
 # Terra DICOM Worklist Server
 
-This is a standalone worklist provider for the `terradb` application.  The implementation is deliberately split into DMWL management classes and database interface classes.
+This is a standalone worklist SCP provider for the `terradb` application.  The implementation is deliberately split into 
+DMWL management classes and database interface classes.  See notes at the end about how to make this a worklist daemon
+for other database schemas.
 
-It is a very rudimentary implementaiton.  Briefly, it:
+This is all very rudimentary.  Briefly, this application:
 
-- Prunes old worklist records from a wlmscpfs data directory
-- Queries the terra database
-- Generates dcmtk DCM dump files using the available data in the exam table
-- Converts those dump files into DCM using dump2dcm
+- Generates DCMTk "dump" files based on a data mapping class
+- Converts those dump files into DCM .wl records using dump2dcm
 - Provides a way to run wlmscpfs and pipe output to a log file
 
 
@@ -151,3 +151,30 @@ Then you can use the following command to start/stop the daemon:
     $ service dmwl_daemon start
     $ service dmwl_daemon stop
     $ service dmwl_daemon status
+    
+## Making it Work with other schemas
+
+Everything is written to be modified.  To introduce another schema just clone the project and branch it.  Then:
+
+Adjust the configuration:
+
+- You'll probably only need to change the DATABASE_NAME parameter, but feel free to modify other things that include
+the application name.
+
+Make a new data management class to pull records from your database:
+
+1. Copy the TerraExamsMgmt.php class to a new file in the same folder, call it NewAppExamsMgmt, or something.
+2. Modify the `QUERY_GET_EXAMS` constant to get all the required fields.
+3. Adjust the `getBetweenDates` method, if needed.
+
+Make a new data object and mapping class to turn that data into DICOM dump files:
+
+1. Copy the TerraExam.php class in data-objects to a new file, call is something else, like NewAppExam.php.  It's
+imperative that this class name end with `Exam` because of a simple check down the stack.
+2. Make modifications to the class attribute list, if you think you need more fields.
+3. Modify the `__construct` method so that it properly translates from your database row to the class attributes.  Make
+sure you set **all** the attributes!
+4. Modify the static `recent` method to appropriately call the `NewAppExamsMgmt` class created above.
+
+And that's it.  Everything else should work properly.
+
