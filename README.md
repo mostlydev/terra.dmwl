@@ -158,8 +158,7 @@ Everything is written to be modified.  To introduce another schema just clone th
 
 Adjust the configuration:
 
-- You'll probably only need to change the DATABASE_NAME parameter, but feel free to modify other things that include
-the application name.
+- You'll probably only need to change the APP_SHORT and DATABASE parameters, but feel free to modify other things to suit your tastes.
 
 Make a new data management class to pull records from your database:
 
@@ -176,5 +175,6 @@ imperative that this class name end with `Exam` because of a simple check down t
 sure you set **all** the attributes!
 4. Modify the static `recent` method to appropriately call the `NewAppExamsMgmt` class created above.
 
-And that's it.  Everything else should work properly.
+Then make sure that **DMWL_SOURCE_CLASS** in `global-headers/configuration.inc.php` points to this new class!
 
+And that's it.  Everything else should work properly.
