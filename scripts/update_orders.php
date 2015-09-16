@@ -8,37 +8,21 @@
 ini_set( 'display_errors', true );
 error_reporting( E_ALL );
 require_once( 'includes/header.inc.php' );
-/*
 $mgr = new ExamsMgmt();
 
 $startDate = new DateTime();
 $startDate->sub( new DateInterval( 'P' . DMWL_MAX_AGE . 'D') );
 $endDate = new DateTime();
 
-$exams = $mgr->getBetweenDates($startDate, $endDate );
-var_dump( $exams );
-*/
+$exams = $mgr->rowsToDataObjects( 'Exam', $mgr->getBetweenDates($startDate, $endDate ) );
 
-$rec = new WorklistRecord();
-$rec->setTag( "0010,0010", "SMITH^VERNON" );
-var_dump( $rec->dump );
+$db_records = array();
 
-exit;
+foreach ($exams as $exam) {
+  $record = new WorklistRecord( $exam );
 
-$location = ORDER_INBOX . '*_*';
-try {
-  $time = new DateTime();
-  //print "[{$time->format('U')}] Looking in {$location}\n";
-  $order_files = glob( $location, GLOB_BRACE);
-  $orders = array();
-  foreach($order_files as $order_file) {
-    $just_name = basename( $order_file );
-    $order = new OrdersHelper($order_file);
-    if ( $order->message_type == 'ORM' )
-    {    
-      array_push($orders, $order);
-    }
-  }
-} catch ( exception $e ) {
-  print_r($e);
+  array_push( $db_records, $record );
 }
+
+$wl = new WLMHelper();
+$wl->prune();

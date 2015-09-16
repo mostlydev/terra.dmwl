@@ -28,7 +28,7 @@ class Exam extends GenericDataObject
     $this->p_gender= $row['ex_p_gender'];
     $this->p_modality= $row['ex_modality'];
     $this->order_no= $row['ex_order_no'];
-    $this->start_date= new DateTime( $row['ex_start_date'] );
-    $this->end_date= new DateTime( $row['ex_end_date'] );
+    $this->start_date= new DateTime( $row['start_date'] );
+    $this->end_date= new DateTime( $row['end_date'] );
   }
 }

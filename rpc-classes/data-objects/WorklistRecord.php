@@ -2,6 +2,81 @@
 
 class WorklistRecord extends GenericDataObject
 {
+  public $dump;
+  public $path;
+  public $needsUpdate;
+
+  public function __construct( $source = null )
+  {
+    parent::__construct();
+
+    if (is_string($source) == 'String' )
+    {
+      $this->fromPath($source);
+    }
+    elseif (get_class($source) == 'Exam' )
+    {
+      $this->fromExam( $source );
+    } else {
+      throw new Exception('Worklist record must have a valid source');
+    }
+  }
+
+  public function isStale() {
+    $cutoff = new DateTime();
+    $cutoff = $cutoff->sub( new DateInterval('P'. DMWL_MAX_AGE .'D') );
+    return ( $this->getDate("0040,0002") < $cutoff );
+  }
+
+  public function setTag( $tag, $value ) {
+    $this->dump = preg_replace( "/(\($tag\))(.+):.+/", "$1$2$3$value", $this->dump );
+  }
+
+  public function isComplete() {
+    return strstr($this->dump, ':' ) == 0;
+  }
+
+  private function fromPath($path) {
+    $this->path = $path;
+    if ($path) {
+      $this->dump = file_get_contents($path);
+    } else {
+      $this->dump = self::DUMP_TEMPLATE;
+    }
+  }
+
+  public function getDateTime( $dateTag, $timeTag )
+  {
+    $dateValue = $this->getTag($dateTag);
+    $timeValue = $this->getTag($timeTag);
+
+    return DateTime::createFromFormat( 'YmdHis', $dateValue. $timeValue );
+  }
+
+  public function getDate( $dateTag )
+  {
+    $dateValue = $this->getTag($dateTag);
+
+    return DateTime::createFromFormat( 'Ymd', $dateValue );
+  }
+
+  public function getTime( $timeTag )
+  {
+    $timeValue = $this->getTag($timeTag);
+
+    return DateTime::createFromFormat( 'His', $timeValue );
+  }
+
+  public function getTag( $tag )
+  {
+    $value = preg_match( "/(\($tag\))\s[A-Z]{2}([\s]+)(.+)$/m", $this->dump, $matches );
+    return $value ? $matches[3] : null;
+  }
+
+  private function fromExam($exam) {
+    print "TODO\r";
+  }
+
   const DUMP_TEMPLATE = <<<EOD
 (0008,0050) SH  :accession
 (0008,0005) CS  [ISO_IR 100]
@@ -28,22 +103,5 @@ class WorklistRecord extends GenericDataObject
 (0040,1001) SH  :procedure_id
 (0040,1003) SH  :priority
 EOD;
-
-  public $dump;
-
-  public function __construct( $exam = null ) {
-    $this->dump = self::DUMP_TEMPLATE;
-  }
-
-  public function setTag( $tag, $value ) {
-    $this->dump = preg_replace( "/(\($tag\))(.+):.+/", "$1$2$3$value", $this->dump );
-  }
-
-  public function isComplete() {
-    return strstr($this->dump, ':' ) == 0;
-  }
-
-
-
 
 }

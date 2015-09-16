@@ -57,6 +57,17 @@ class GenericMgmt extends GenericHelper {
   }
 
   /**
+   *  @brief Converts array of rows to array of data objects.
+   */
+  public function rowsToDataObjects( $objectType, $rows ) {
+    $return = array();
+    foreach( $rows as $row ) {
+      $return[] = new $objectType( $row );
+    }
+    return $return;
+  }
+
+  /**
    *  @brief Begins transaction with currently opened connection.
    *
    *  @return Boolean.
