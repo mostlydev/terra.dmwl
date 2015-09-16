@@ -49,8 +49,8 @@ Make sure that `\3rd-party\dcmtk\bin` contains `wlmscpfs.exe` and `dump2dcm.exe`
 
 Make a copy of global-headers/configuration.inc.template.php to global-headers/configuration.inc.php
 
-  \\:> copy .\global-headers\configuration.inc.template.php .\global-headers\configuration.inc.php  
-  \\:> copy .\scripts\includes\require-globals.template.php .\scripts\includes\require-globals.php  
+    \:> copy .\global-headers\configuration.inc.template.php .\global-headers\configuration.inc.php  
+    \:> copy .\scripts\includes\require-globals.template.php .\scripts\includes\require-globals.php  
 
 
 Edit `global-headers/configuration.inc.php`.  Refer to comments throughout.
