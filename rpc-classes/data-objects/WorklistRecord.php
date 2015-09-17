@@ -3,49 +3,35 @@
 class WorklistRecord extends GenericDICOMDataObject
 {
   const UID_TAG = "0020,000d";
+  const DCM_EXTENSION = 'wl';
 
   private $source;
 
   public function __construct( $source = null )
   {
-    if (is_string($source) == 'String' )
-    {
-      $this->fromPath($source);
-    }
-    elseif (strstr(get_class($source), 'Exam'))
-    {
-      $this->source = $source;
-      $this->path = DMWL_DCM_PATH . '/' . DMWL_AE_TITLE . '/' . $source->uid . '.dump';
-    } else {
-      throw new Exception('Worklist record must have a recognized source');
-    }
-
+    $this->source = $source;
     parent::__construct();
   }
 
-  public function updateDump()
+  public function update_dump()
   {
-    if ($this->source)
+    if (is_string($this->source) == 'String' )
+    {
+      $this->read_dump_from_path($this->source);
+    }
+    elseif (strstr(get_class($this->source), 'Exam'))
+    {
       $this->dump = $this->source->dump;
+    } else {
+      throw new Exception('Worklist record must have a coherent source');
+    }
   }
 
-  public function fileNeedsUpdate() {
-    if (!file_exists($this->path)) return true;
-    if ($this->dump !== file_get_contents($this->path)) return true;
-    return false;
-  }
-
-  public function updateDumpFile() {
-    file_put_contents($this->path, $this->dump);
-    $cmd = escapeshellcmd(DCMTK_BIN_PATH . 'dump2dcm' );
-    $arg1 = escapeshellarg( $this->path );
-    $arg2 = escapeshellarg( $this->path . '.wl' );
-    exec( "$cmd --write-xfer-little $arg1 $arg2" );
-  }
-
-  public function isStale() {
+  public function is_older_than( $days ) {
     $cutoff = new DateTime();
-    $cutoff = $cutoff->sub( new DateInterval('P'. DMWL_MAX_AGE .'D') );
+    $days_interval = new DateInterval( 'P'. $days .'D');
+    $cutoff = $cutoff->sub( $days_interval );
+
     return ( $this->getDate("0040,0002") < $cutoff );
   }
 }

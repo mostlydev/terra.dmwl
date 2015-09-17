@@ -51,7 +51,7 @@ class TerraExam extends GenericDICOMDataObject
     return $mgr->rowsToDataObjects( 'TerraExam', $mgr->getBetweenDates($startDate, $endDate ) );
   }
 
-  public function updateDump()
+  public function update_dump()
   {
     $this->dump = self::DUMP_TEMPLATE;
     $this->setTag("0008,0050", $this->accession);
