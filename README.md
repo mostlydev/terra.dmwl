@@ -97,19 +97,20 @@ Windows does not support linking in the filesystem (without some extensions), so
 
 ## Configuring the PHP application
 
-### Linux and Mac
-
-    $ chmod +x tools/init-config
-    $ tools/init-config
-
-### Windows
-
 Make a copy of global-headers/configuration.inc.template.php to global-headers/configuration.inc.php
 
-    \:> copy .\global-headers\configuration.inc.template.php .\global-headers\configuration.inc.php  
+Linux and Mac:
+
+    $ cp global-headers/configuration.inc.template.php global-headers/configuration.inc.php  
+
+Windows:
+
+    $ copy .\global-headers\configuration.inc.template.php .\global-headers\configuration.inc.php  
 
 
-Then edit `global-headers/configuration.inc.php`.  Refer to comments throughout.  Be very sure to check and adjust *APP_ROOT*, *DATABASE_*, and *DMWL_* parameters. Also adjust *DCMTK_BIN_PATH* if you'd like to be more specific about the location of **dump2dcm** and **wlmscpfs**, but if you've followed the instructions above then you can leave them as-is.
+Then edit `global-headers/configuration.inc.php`.  Refer to comments throughout.  Be very sure to check and adjust, 
+*DATABASE_*, and *DMWL_* parameters. Also adjust *DCMTK_BIN_PATH* if you'd like to be more specific about the location 
+of **dump2dcm** and **wlmscpfs**, but if you've followed the instructions above then you can leave them as-is.
 
 # Running the Maintenance Task
 

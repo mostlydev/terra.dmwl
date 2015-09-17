@@ -5,7 +5,7 @@
  */
 
 ifndefdefine( 'APP_SHORT', 'terra' ); //TODO: Check and/or change if using a different app and set of classes
-ifndefdefine( 'APP_ROOT', 'c:/www/' . APP_SHORT . '/' ); //TODO: Check and/or change
+ifndefdefine( 'APP_ROOT', realpath(realpath(dirname(__FILE__)) . '/..') . '/' );
 
 // Paths
 ifndefdefine( 'THIRD_PARTY_PATH', APP_ROOT . '3rd-party/');

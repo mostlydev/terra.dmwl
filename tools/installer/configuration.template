@@ -1,8 +1,0 @@
-#!/bin/bash
-
-SVN_REPOSITORY=svn://fluxinc.ca/cp5
-SVN_USER= # leave blank for interactive prompting
-SVN_PASSWORD= # leave blank for interactive prompting
-TARGET_PUBLIC=/data/amw/tmp/public_directory
-TARGET_PRIVATE=/data/amw/tmp/private_directory
-
