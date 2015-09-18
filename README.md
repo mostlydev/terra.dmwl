@@ -1,14 +1,14 @@
 # PHP DICOM Worklist Server
 
-This is a standalone worklist SCP provider for a particular RIS called `terra`.  The implementation
+This is a standalone worklist SCP provider for a particular RIS called **Terra**.  The implementation
 has been deliberately split into DMWL management classes and database interface classes so that it can be reused.
 
 > See notes at the end about how to turn this into a worklist daemon for other schemas.
 
 This is all very rudimentary.  Briefly, this application:
 
-- Generates DCMTk "dump" files based on a data mapping class some MySQL data source
-- Converts those dump files into DCM .wl records using dump2dcm
+- Generates DCMTk "dump" files based on a data mapping class from a MySQL data source
+- Converts those dump files into DCM .wl records using `dump2dcm`
 - Provides a way to run `wlmscpfs` to use those files and pipe output to a log file
 
 
@@ -48,7 +48,7 @@ Clone the project:
     $ git clone git@bitbucket.org:gamut/terra.dmwl.git
     $ cd terra.dmwl
 
-If the first step fails, that's because you don't have a Bitbucket account, or haven't yet updated your SSH keys on the site.  Read [here](https://confluence.atlassian.com/bitbucket/how-to-install-a-public-key-on-your-bitbucket-account-276628835.html) to find out how.
+If the first step fails, that's because you don't have a Bitbucket account, or haven't yet updated your SSH keys on the site.  Read [here](https://confluence.atlassian.com/bitbucket/how-to-install-a-public-key-on-your-bitbucket-account-276628835.html) to find out how to do that.
 
 ## Install DCMTk binaries
 
@@ -78,9 +78,8 @@ Then install DCMTk:
 Then, create links to the relevant binaries (this is just in case paths aren't configured in your PHP
 environment):
 
-    $ cd 3rd-party/dcmtk/bin
-    $ ln -s $(which wlmscpfs) wlmscpfs
-    $ ln -s $(which dump2dcm) dump2dcm
+    $ ln -s $(which wlmscpfs) 3rd-party/dcmtk/bin/wlmscpfs
+    $ ln -s $(which dump2dcm) 3rd-party/dcmtk/bin/dump2dcm
 
 ### Windows
 
@@ -105,12 +104,14 @@ Linux and Mac:
 
 Windows:
 
-    $ copy .\global-headers\configuration.inc.template.php .\global-headers\configuration.inc.php  
+    > copy .\global-headers\configuration.inc.template.php .\global-headers\configuration.inc.php  
 
 
 Then edit `global-headers/configuration.inc.php`.  Refer to comments throughout.  Be very sure to check and adjust, 
-*DATABASE_*, and *DMWL_* parameters. Also adjust *DCMTK_BIN_PATH* if you'd like to be more specific about the location 
-of **dump2dcm** and **wlmscpfs**, but if you've followed the instructions above then you can leave them as-is.
+*DATABASE_*, and *DMWL_* parameters.
+
+Also adjust *DCMTK_BIN_PATH* if you'd like to be more specific about the location 
+of **dump2dcm** and **wlmscpfs**, but if you've followed the instructions above then you can leave that one as-is.
 
 # Running the Maintenance Task
 
@@ -139,10 +140,10 @@ A cron task will suffice:
 Then add the following entry:
 
 ```
-*/15** /usr/bin/php /home/username/terra_dwml/scripts/update_orders.php >/dev/null 2>&1
+*/15 * * * * /usr/bin/php /home/username/terra_dwml/scripts/update_orders.php >/dev/null 2>&1
 ```
 
-> Make sure to adjust the path to `update_orders.php` to reflect your environment!
+> Make sure to adjust the path to `update_orders.php` and `php` to reflect your environment!
 
 Save and exit.
 
@@ -161,7 +162,7 @@ default port 1070 is because anything lower than 1024 requires elevation on Wind
 
 To run the DICOM modality worklist daemon.
 
-    :> C:\Program Files\PHP\php c:\path_to\terra.dmwl\scripts\dmwl_deamon.php
+    > C:\Program Files\PHP\php c:\path_to\terra.dmwl\scripts\dmwl_deamon.php
 
 You might try to use [NSSM](https://nssm.cc/) to turn this into a Windows service.
 
