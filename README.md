@@ -191,7 +191,7 @@ Make a new data management class to pull records from your database:
 
 1. Copy the TerraExamsMgmt.php class to a new file in the same folder, call it NewAppExamsMgmt, or something.
 2. Modify the `QUERY_GET_EXAMS` constant to get all the required fields.
-3. Adjust the `getBetweenDates` method, if needed.
+3. Adjust the `get_between_dates` method, if needed.
 
 Make a new data object and mapping class to turn that data into DICOM dump files:
 
