@@ -78,6 +78,7 @@ Then install DCMTk:
 Then, create links to the relevant binaries (this is just in case paths aren't configured in your PHP
 environment):
 
+    $ mkdir 3rd-party/dcmtk/bin
     $ ln -s $(which wlmscpfs) 3rd-party/dcmtk/bin/wlmscpfs
     $ ln -s $(which dump2dcm) 3rd-party/dcmtk/bin/dump2dcm
 
