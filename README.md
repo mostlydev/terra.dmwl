@@ -1,3 +1,9 @@
+# If you are looking to just test DMWL
+
+We have a public server.  Check it out here.
+
+https://fluxinc.ca/public-test-dicom-modality-worklist/
+
 # PHP DICOM Worklist Server
 
 This is a standalone worklist SCP provider for a particular RIS called **Terra**.  The implementation
